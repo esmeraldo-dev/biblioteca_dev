@@ -18,8 +18,8 @@ public class LivroService {
         return livroRepository.saveAndFlush(livro);
     }
 
-    public List<Livro> listarTodos() {
-        return livroRepository.findAll();
+    public List<Livro> listarDisponiveis() {
+        return livroRepository.findByStatusIgnoreCase("DISPONIVEL");
     }
 
     public List<Livro> buscarLivroPorTitulo(String titulo) {
@@ -49,5 +49,12 @@ public class LivroService {
                 .isbn(livroEntity.getIsbn())
                 .build();
         return livroRepository.saveAndFlush(livroAtualizado);
+    }
+
+    public void deletarLivroPorId(Long id) {
+        if (!livroRepository.existsById(id)) {
+            throw new RuntimeException("Livro não encontrado com id: " + id);
+        }
+        livroRepository.deleteById(id);
     }
 }
