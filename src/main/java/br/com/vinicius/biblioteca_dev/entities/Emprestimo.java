@@ -1,6 +1,5 @@
 package br.com.vinicius.biblioteca_dev.entities;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,37 +8,31 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "tb_livros")
+@Table(name = "tb_emprestimos")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Livro {
+@Service
+public class Emprestimo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String titulo;
-
-    @Column(unique = true, nullable = false)
-    private String isbn;
-
-    private String status;
-
     @ManyToOne
-    @JoinColumn(name = "autor_id")
-    private Autor autor;
+    @JoinColumn(name = "livro_id")
+    private Livro livro;
 
-    private Integer anoPublicacao;
+    private LocalDate dataEmprestimo;
+    private LocalDate dataDevolucaoPrevista;
+    private String nomeCliente;
 }
