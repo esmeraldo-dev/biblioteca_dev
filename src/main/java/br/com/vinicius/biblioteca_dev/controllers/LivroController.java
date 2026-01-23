@@ -5,9 +5,11 @@ import br.com.vinicius.biblioteca_dev.services.LivroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -15,7 +17,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/livros")
-public class LivroControler {
+public class LivroController {
 
     @Autowired
     private LivroService livroService;
@@ -44,16 +46,15 @@ public class LivroControler {
         return ResponseEntity.ok(livro);
     }
 
-    @GetMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Livro> atualizar(@PathVariable Long id, @RequestBody Livro livro){
         Livro livroAtualizado = livroService.atualizarLivroPorId(id, livro);
         return ResponseEntity.ok(livroAtualizado);
     }
 
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         livroService.deletarLivroPorId(id);
         return ResponseEntity.ok().build();
     }
-
 }
