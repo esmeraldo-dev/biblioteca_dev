@@ -1,8 +1,13 @@
 package br.com.vinicius.biblioteca_dev.services;
 
+import br.com.vinicius.biblioteca_dev.dto.EmprestimoRequestDTO;
+import br.com.vinicius.biblioteca_dev.dto.EmprestimoResponseDTO;
 import br.com.vinicius.biblioteca_dev.entities.Emprestimo;
+import br.com.vinicius.biblioteca_dev.entities.Livro;
+import br.com.vinicius.biblioteca_dev.entities.Usuario;
 import br.com.vinicius.biblioteca_dev.repositories.EmprestimoRepository;
 import br.com.vinicius.biblioteca_dev.repositories.LivroRepository;
+import br.com.vinicius.biblioteca_dev.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,36 +23,44 @@ public class EmprestimoService {
 
     @Autowired
     private LivroRepository livroRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    public Emprestimo salvarEmprestimo(Emprestimo emprestimo) {
+    public EmprestimoResponseDTO salvarEmprestimo(EmprestimoRequestDTO dto) {
 
-        boolean temAtraso = emprestimoRepository.existsByUsuarioIdAndDataDevolucaoPrevistaBeforeAndDataDevolucaoRealIsNull(
-                emprestimo.getUsuario().getId(),
-                LocalDate.now()
-        );
-        if (temAtraso) {
+        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        Livro livro = livroRepository.findById(dto.livroId())
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+
+        if (emprestimoRepository.existsByUsuarioIdAndDataDevolucaoPrevistaBeforeAndDataDevolucaoRealIsNull(usuario.getId(), LocalDate.now())) {
             throw new RuntimeException("Usuário possui empréstimos em atraso e não pode realizar novos empréstimos.");
         }
 
-        boolean livroOcupado = emprestimoRepository.existsByLivroIdAndDataDevolucaoRealIsNull(
-                emprestimo.getLivro().getId()
-        );
-        if (livroOcupado) {
+        if (emprestimoRepository.existsByLivroIdAndDataDevolucaoRealIsNull(livro.getId())) {
             throw new RuntimeException("Este livro já está com outro leitor no momento.");
         }
 
-        emprestimo.setDataEmprestimo(LocalDate.now());
-        emprestimo.setDataDevolucaoPrevista(LocalDate.now().plusDays(7));
-
-        var livro = livroRepository.findById(emprestimo.getLivro().getId()).orElseThrow(
-                () -> new RuntimeException("Livro não encontrado")
-        );
+        Emprestimo emprestimo = Emprestimo.builder()
+                .usuario(usuario)
+                .livro(livro)
+                .dataEmprestimo(LocalDate.now())
+                .dataDevolucaoPrevista(LocalDate.now().plusDays(7))
+                .build();
 
         Emprestimo salvo = emprestimoRepository.saveAndFlush(emprestimo);
         livro.setStatus("EMPRESTADO");
         livroRepository.saveAndFlush(livro);
 
-        return salvo;
+        return new EmprestimoResponseDTO(
+                salvo.getId(),
+                usuario.getNome(),
+                livro.getTitulo(),
+                salvo.getDataEmprestimo(),
+                salvo.getDataDevolucaoPrevista(),
+                0.0
+        );
     }
 
     public List<Emprestimo> listarTodosOsEmprestimos() {

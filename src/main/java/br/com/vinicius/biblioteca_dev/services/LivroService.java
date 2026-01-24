@@ -18,6 +18,10 @@ public class LivroService {
         return livroRepository.saveAndFlush(livro);
     }
 
+    public List<Livro> listarTodos() {
+        return livroRepository.findAll();
+    }
+
     public List<Livro> listarDisponiveis() {
         return livroRepository.findByStatusIgnoreCase("DISPONIVEL");
     }
@@ -57,4 +61,5 @@ public class LivroService {
         }
         livroRepository.deleteById(id);
     }
+
 }

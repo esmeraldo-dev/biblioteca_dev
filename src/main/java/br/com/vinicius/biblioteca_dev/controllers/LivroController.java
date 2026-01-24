@@ -28,6 +28,11 @@ public class LivroController {
         return ResponseEntity.ok(novoLivro);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Livro>> listarTodos() {
+        return ResponseEntity.ok(livroService.listarTodos());
+    }
+
     @GetMapping("/{titulo}")
     public ResponseEntity<List<Livro>> listar(@PathVariable String titulo){
         List<Livro> livros = livroService.buscarLivroPorTitulo(titulo);

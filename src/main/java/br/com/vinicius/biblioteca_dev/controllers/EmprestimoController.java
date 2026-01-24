@@ -1,5 +1,7 @@
 package br.com.vinicius.biblioteca_dev.controllers;
 
+import br.com.vinicius.biblioteca_dev.dto.EmprestimoRequestDTO;
+import br.com.vinicius.biblioteca_dev.dto.EmprestimoResponseDTO;
 import br.com.vinicius.biblioteca_dev.entities.Emprestimo;
 import br.com.vinicius.biblioteca_dev.services.EmprestimoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,8 @@ public class EmprestimoController {
     private EmprestimoService emprestimoService;
 
     @PostMapping
-    public ResponseEntity<Emprestimo> emprestarLivro(@RequestBody Emprestimo emprestimo) {
-        Emprestimo novoEmprestimo = emprestimoService.salvarEmprestimo(emprestimo);
-        return ResponseEntity.ok(novoEmprestimo);
+    public ResponseEntity<EmprestimoResponseDTO> emprestarLivro(@RequestBody EmprestimoRequestDTO dto) {
+        return ResponseEntity.ok(emprestimoService.salvarEmprestimo(dto));
     }
 
     @GetMapping
