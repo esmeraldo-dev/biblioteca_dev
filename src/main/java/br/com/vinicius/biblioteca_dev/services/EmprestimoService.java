@@ -20,16 +20,28 @@ public class EmprestimoService {
     private LivroRepository livroRepository;
 
     public Emprestimo salvarEmprestimo(Emprestimo emprestimo) {
+
+        boolean temAtraso = emprestimoRepository.existsByUsuarioIdAndDataDevolucaoPrevistaBeforeAndDataDevolucaoRealIsNull(
+                emprestimo.getUsuario().getId(),
+                LocalDate.now()
+        );
+        if (temAtraso) {
+            throw new RuntimeException("Usuário possui empréstimos em atraso e não pode realizar novos empréstimos.");
+        }
+
+        boolean livroOcupado = emprestimoRepository.existsByLivroIdAndDataDevolucaoRealIsNull(
+                emprestimo.getLivro().getId()
+        );
+        if (livroOcupado) {
+            throw new RuntimeException("Este livro já está com outro leitor no momento.");
+        }
+
         emprestimo.setDataEmprestimo(LocalDate.now());
         emprestimo.setDataDevolucaoPrevista(LocalDate.now().plusDays(7));
 
         var livro = livroRepository.findById(emprestimo.getLivro().getId()).orElseThrow(
                 () -> new RuntimeException("Livro não encontrado")
         );
-
-        if ("EMPRESTADO".equals(livro.getStatus())) {
-            throw new RuntimeException("Este livro já está emprestado!");
-        }
 
         Emprestimo salvo = emprestimoRepository.saveAndFlush(emprestimo);
         livro.setStatus("EMPRESTADO");
