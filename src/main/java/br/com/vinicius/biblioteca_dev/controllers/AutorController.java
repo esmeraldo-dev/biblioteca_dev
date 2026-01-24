@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,8 +25,12 @@ public class AutorController {
     private AutorService autorService;
 
     @GetMapping
-    public List<Autor> listarAutores() {
-        return autorService.listarTodos();
+    public ResponseEntity<List<Autor>> listarAutores() {
+        List<Autor> autores = autorService.listarTodos();
+        if (autores.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(autores);
     }
 
     @GetMapping("/{id}")

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -16,6 +17,10 @@ public class UsuarioService {
     public void salvarUsuario(Usuario usuario) {
         usuario.setDataDoCadastro(LocalDate.now());
         usuarioRepository.saveAndFlush(usuario);
+    }
+
+    public List<Usuario> listarTodosOsUsuarios() {
+        return usuarioRepository.findAll();
     }
 
     public Usuario buscarUsuarioPorId(Long id) {

@@ -1,5 +1,6 @@
 package br.com.vinicius.biblioteca_dev.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 @Table(name = "tb_emprestimos")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Service
@@ -28,11 +31,20 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private LocalDate dataEmprestimo;
+
+    @Column(nullable = false)
+    private LocalDate dataDevolucaoPrevista;
+
+    private LocalDate dataDevolucaoReal;
+
     @ManyToOne
-    @JoinColumn(name = "livro_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
-    private LocalDate dataEmprestimo;
-    private LocalDate dataDevolucaoPrevista;
-    private String nomeCliente;
 }

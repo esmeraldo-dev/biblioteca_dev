@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -27,6 +28,15 @@ public class UsuarioController {
         if(usuario.getDataDoCadastro() == null) usuario.setDataDoCadastro(LocalDate.now());
         usuarioService.salvarUsuario(usuario);
         return ResponseEntity.ok(usuario);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        List<Usuario> usuarios = usuarioService.listarTodosOsUsuarios();
+        if(usuarios.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/{id}")
