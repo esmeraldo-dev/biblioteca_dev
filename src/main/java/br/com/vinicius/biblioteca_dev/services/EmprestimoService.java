@@ -23,6 +23,7 @@ public class EmprestimoService {
 
     @Autowired
     private LivroRepository livroRepository;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -63,13 +64,30 @@ public class EmprestimoService {
         );
     }
 
-    public List<Emprestimo> listarTodosOsEmprestimos() {
-        return emprestimoRepository.findAll();
+    public List<EmprestimoResponseDTO> listarTodosOsEmprestimos() {
+        return emprestimoRepository.findAll().stream()
+                .map(emprestimo -> new EmprestimoResponseDTO(
+                        emprestimo.getId(),
+                        emprestimo.getUsuario().getNome(),
+                        emprestimo.getLivro().getTitulo(),
+                        emprestimo.getDataEmprestimo(),
+                        emprestimo.getDataDevolucaoPrevista(),
+                        emprestimo.getValorMulta() != null ? emprestimo.getValorMulta() : 0.0
+                ))
+                .toList();
     }
 
-    public Emprestimo buscarEmprestimoPorId(Long id) {
-        return emprestimoRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Empréstimo não encontrado")
+    public EmprestimoResponseDTO buscarEmprestimoPorId(Long id) {
+        Emprestimo emprestimo = emprestimoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+
+        return new EmprestimoResponseDTO(
+                emprestimo.getId(),
+                emprestimo.getUsuario().getNome(),
+                emprestimo.getLivro().getTitulo(),
+                emprestimo.getDataEmprestimo(),
+                emprestimo.getDataDevolucaoPrevista(),
+                emprestimo.getValorMulta() != null ? emprestimo.getValorMulta() : 0.0
         );
     }
 

@@ -1,5 +1,6 @@
 package br.com.vinicius.biblioteca_dev.controllers;
 
+import br.com.vinicius.biblioteca_dev.dto.UsuarioResponseDTO;
 import br.com.vinicius.biblioteca_dev.entities.Usuario;
 import br.com.vinicius.biblioteca_dev.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> listarUsuarios() {
-        List<Usuario> usuarios = usuarioService.listarTodosOsUsuarios();
+    public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios() {
+        List<UsuarioResponseDTO> usuarios = usuarioService.listarTodosOsUsuarios();
         if(usuarios.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -40,9 +41,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        Usuario usuario = usuarioService.buscarUsuarioPorId(id);
-        return ResponseEntity.ok(usuario);
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
     }
 
     @PutMapping("/{id}")

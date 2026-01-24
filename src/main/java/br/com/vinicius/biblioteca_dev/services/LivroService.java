@@ -1,5 +1,6 @@
 package br.com.vinicius.biblioteca_dev.services;
 
+import br.com.vinicius.biblioteca_dev.dto.LivroResponseDTO;
 import br.com.vinicius.biblioteca_dev.entities.Livro;
 import br.com.vinicius.biblioteca_dev.repositories.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,24 @@ public class LivroService {
         return livroRepository.saveAndFlush(livro);
     }
 
-    public List<Livro> listarTodos() {
-        return livroRepository.findAll();
+    public List<LivroResponseDTO> listarTodos() {
+        return livroRepository.findAll().stream()
+                .map(l -> new LivroResponseDTO(
+                        l.getId(),
+                        l.getTitulo(),
+                        l.getAutor().getNome(),
+                        l.getStatus()))
+                .toList();
+    }
+
+    public LivroResponseDTO buscarLivroPorId(Long id) {
+        Livro livro = livroRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Livro não encontrado com id: " + id));
+
+        return new  LivroResponseDTO(livro.getId(),
+                livro.getTitulo(),
+                livro.getAutor().getNome(),
+                livro.getStatus());
     }
 
     public List<Livro> listarDisponiveis() {
@@ -32,12 +49,6 @@ public class LivroService {
             throw new RuntimeException("Nenhum livro encontrado com o termo: " + titulo);
         }
         return livros;
-    }
-
-    public Livro buscarLivroPorId(Long id) {
-        return livroRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Livro não encontrado com id: " + id)
-        );
     }
 
     public Livro atualizarLivroPorId(Long id, Livro livroExistente) {

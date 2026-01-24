@@ -47,4 +47,5 @@ public class Emprestimo {
     @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
+    private Double valorMulta;
 }

@@ -1,5 +1,6 @@
 package br.com.vinicius.biblioteca_dev.services;
 
+import br.com.vinicius.biblioteca_dev.dto.UsuarioResponseDTO;
 import br.com.vinicius.biblioteca_dev.entities.Usuario;
 import br.com.vinicius.biblioteca_dev.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,17 @@ public class UsuarioService {
         usuarioRepository.saveAndFlush(usuario);
     }
 
-    public List<Usuario> listarTodosOsUsuarios() {
-        return usuarioRepository.findAll();
+    public List<UsuarioResponseDTO> listarTodosOsUsuarios() {
+        return usuarioRepository.findAll().stream()
+                .map(u -> new UsuarioResponseDTO(u.getId(), u.getNome(), u.getEmail()))
+                .toList();
     }
 
-    public Usuario buscarUsuarioPorId(Long id) {
+    public UsuarioResponseDTO buscarUsuarioPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        return usuarioRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado")
-        );
+        return new UsuarioResponseDTO(usuario.getId(), usuario.getNome(), usuario.getEmail());
     }
 
     public void deletarUsuarioPorId(Long id) {

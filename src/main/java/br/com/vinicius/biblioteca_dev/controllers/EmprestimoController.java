@@ -29,15 +29,15 @@ public class EmprestimoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Emprestimo>> listarTodosOsEmprestimos() {
-        List<Emprestimo> emprestimos = emprestimoService.listarTodosOsEmprestimos();
+    public ResponseEntity<List<EmprestimoResponseDTO>> listarTodosOsEmprestimos() {
+        List<EmprestimoResponseDTO> emprestimos = emprestimoService.listarTodosOsEmprestimos();
         if (emprestimos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(emprestimos);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Emprestimo> buscarEmprestimoPorId(@PathVariable Long id) {
+    public ResponseEntity<EmprestimoResponseDTO> buscarEmprestimoPorId(@PathVariable Long id) {
         return ResponseEntity.ok(emprestimoService.buscarEmprestimoPorId(id));
     }
 

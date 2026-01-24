@@ -1,5 +1,6 @@
 package br.com.vinicius.biblioteca_dev.controllers;
 
+import br.com.vinicius.biblioteca_dev.dto.LivroResponseDTO;
 import br.com.vinicius.biblioteca_dev.entities.Livro;
 import br.com.vinicius.biblioteca_dev.services.LivroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,13 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Livro>> listarTodos() {
+    public ResponseEntity<List<LivroResponseDTO>> listarTodos() {
         return ResponseEntity.ok(livroService.listarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LivroResponseDTO> buscarPorId(@PathVariable Long id){
+        return ResponseEntity.ok(livroService.buscarLivroPorId(id));
     }
 
     @GetMapping("/{titulo}")
@@ -43,12 +49,6 @@ public class LivroController {
     public ResponseEntity<List<Livro>> listarDisponiveis() {
         List<Livro> disponiveis = livroService.listarDisponiveis();
         return ResponseEntity.ok(disponiveis);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Livro> buscarPorId(@PathVariable Long id){
-        Livro livro = livroService.buscarLivroPorId(id);
-        return ResponseEntity.ok(livro);
     }
 
     @PutMapping("/{id}")
