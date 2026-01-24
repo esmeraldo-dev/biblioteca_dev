@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,5 +38,10 @@ public class EmprestimoController {
     @GetMapping("/{id}")
     public ResponseEntity<Emprestimo> buscarEmprestimoPorId(@PathVariable Long id) {
         return ResponseEntity.ok(emprestimoService.buscarEmprestimoPorId(id));
+    }
+
+    @PutMapping("/{id}/devolver")
+    public ResponseEntity<Emprestimo> devolverLivro(@PathVariable Long id) {
+        return ResponseEntity.ok(emprestimoService.devolverEmprestimoPorId(id));
     }
 }

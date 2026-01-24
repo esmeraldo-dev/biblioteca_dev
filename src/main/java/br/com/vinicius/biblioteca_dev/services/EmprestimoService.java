@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -45,5 +46,32 @@ public class EmprestimoService {
         return emprestimoRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Empréstimo não encontrado")
         );
+    }
+
+    public Emprestimo devolverEmprestimoPorId(Long id) {
+        Emprestimo emprestimo = emprestimoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+
+        if(emprestimo.getDataDevolucaoReal() != null) {
+            throw new RuntimeException("Este empréstimo já foi devolvido!");
+        }
+
+        LocalDate hoje = LocalDate.now();
+        emprestimo.setDataDevolucaoReal(LocalDate.now());
+
+        if (hoje.isAfter(emprestimo.getDataDevolucaoPrevista())) {
+            long diasDeAtraso = ChronoUnit.DAYS.between(emprestimo.getDataDevolucaoPrevista(), hoje);
+            double valorMulta = diasDeAtraso * 2.0;
+            System.out.println("🚨 ALERTA DE ATRASO: Usuário " + emprestimo.getUsuario().getNome() +
+                    " atrasou " + diasDeAtraso + " dias. Multa: R$ " + valorMulta);
+        } else {
+            System.out.println("✅ Devolução no prazo para: " + emprestimo.getUsuario().getNome());
+        }
+
+        var livro = emprestimo.getLivro();
+        livro.setStatus("DISPONIVEL");
+        livroRepository.save(livro);
+
+        return emprestimoRepository.saveAndFlush(emprestimo);
     }
 }
